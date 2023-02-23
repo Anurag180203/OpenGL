@@ -150,6 +150,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="tests\test.cpp" />
     <ClCompile Include="tests\TestClearColor.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VertexArray.cpp" />

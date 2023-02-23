@@ -112,18 +112,19 @@ int main(void)
         float r = 0.0f;
         float increment = 0.05f;*/
 
+        test::Test* currentTest = nullptr;
+        test::TestMenu* testMenu = new test::TestMenu(currentTest);
+        currentTest = testMenu;
 
-        test::TestClearColor test;
-
+        testMenu->RegisterTest<test::TestClearColor>("Clear Color");
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
+            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+
             /* Render here */
             renderer.Clear();
-
-            test.OnUpdate(0.0f);
-            test.OnRender();
 
             //glBegin(GL_TRIANGLES);  //Legacy openGL
             //glVertex2f(-0.5f, -0.5f);
@@ -132,6 +133,20 @@ int main(void)
             //glEnd();
 
             ImGui_ImplGlfwGL3_NewFrame();
+
+            if (currentTest)
+            {
+                currentTest->OnUpdate(0.0f);
+                currentTest->OnRender();
+                ImGui::Begin("Test");
+                if (currentTest != testMenu && ImGui::Button("<-"))
+                {
+                    delete currentTest;
+                    currentTest = testMenu;
+                }
+                currentTest->OnImGuiRender();
+                ImGui::End();
+            }
 
             //{
             //    glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
@@ -163,8 +178,6 @@ int main(void)
             //    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             //}
 
-            test.OnImGuiRender();
-
             ImGui::Render();
             ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
             /* Swap front and back buffers */
@@ -173,7 +186,11 @@ int main(void)
             /* Poll for and process events */
             GLCall(glfwPollEvents());
         }
+        delete currentTest;
+        if (currentTest != testMenu)
+            delete testMenu;
     }
+
     ImGui_ImplGlfwGL3_Shutdown();
     ImGui::DestroyContext();
     glfwTerminate();
